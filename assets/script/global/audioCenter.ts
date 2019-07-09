@@ -2,7 +2,6 @@
  音乐管理
  */
 
-
 export default class AudioCenter{
     bgmValue:number = 1;        //总背景音量.   实际的背景音量 = bgmValue * bgmValueInOne
     bgmValueInOne:number = 1;    //单个背景音乐的音量
@@ -55,7 +54,6 @@ export default class AudioCenter{
     }
     constructor(){
         let self = this;
-        cc.audioManager = this;
         let strBgmValue = cc.sys.localStorage.getItem("bgmValue");
         let strEffectValue = cc.sys.localStorage.getItem("effectValue");
 
