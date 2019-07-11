@@ -1,26 +1,8 @@
-const enum STATE {
-    NONE = -1,//未点击
-    CLIKED = -1,//已点开
-    FLAG =-1,//插旗
-    DOUBT = -1,//疑问
- };
-
-const enum TYPE {
-    ZERO = 0,
-    ONE = 1,
-    TWO = 2,
-    THREE = 3,
-    FOUR = 4,
-    FIVE = 5,
-    SIX = 6,
-    SEVEN = 7,
-    EIGHT = 8,
-    BOMB = 9
-};
+import {TILE_STATE, TILE_TYPE} from "./sldzzGlobal"
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class tile extends cc.Component {
+export default class sldzzTile extends cc.Component {
     @property(cc.SpriteFrame)
     picNone: cc.SpriteFrame = null;
 
@@ -36,9 +18,11 @@ export default class tile extends cc.Component {
     @property(cc.SpriteFrame)
     picBomb: cc.SpriteFrame = null;
 
-    private _state: STATE = STATE.NONE;
+    private _state: TILE_STATE = TILE_STATE.NONE;
 
-    type: TYPE = TYPE.ZERO;
+    type: TILE_TYPE = TILE_TYPE.ZERO;
+
+    sign: number = null; //标记
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -56,16 +40,16 @@ export default class tile extends cc.Component {
         if (value !== this._state) {
             this._state = value;
             switch(this._state) {
-                case STATE.NONE:
+                case TILE_STATE.NONE:
                     this.getComponent(cc.Sprite).spriteFrame = this.picNone;
                     break;
-                case STATE.CLIKED:
+                case TILE_STATE.CLIKED:
                     this.showType();
                     break;
-                case STATE.FLAG:
+                case TILE_STATE.FLAG:
                     this.getComponent(cc.Sprite).spriteFrame = this.picFlag;
                     break;
-                case STATE.DOUBT:
+                case TILE_STATE.DOUBT:
                     this.getComponent(cc.Sprite).spriteFrame = this.picDoubt;
                     break;
                 default:break;
@@ -75,34 +59,34 @@ export default class tile extends cc.Component {
 
     showType() {
         switch(this.type){
-            case TYPE.ZERO:
+            case TILE_TYPE.ZERO:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[0];
                 break;
-            case TYPE.ONE:
+            case TILE_TYPE.ONE:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[1];
                 break;
-            case TYPE.TWO:
+            case TILE_TYPE.TWO:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[2];
                 break;
-            case TYPE.THREE:
+            case TILE_TYPE.THREE:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[3];
                 break;
-            case TYPE.FOUR:
+            case TILE_TYPE.FOUR:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[4];
                 break;
-            case TYPE.FIVE:
+            case TILE_TYPE.FIVE:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[5];
                 break;
-            case TYPE.SIX:
+            case TILE_TYPE.SIX:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[6];
                 break;
-            case TYPE.SEVEN:
+            case TILE_TYPE.SEVEN:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[7];
                 break;
-            case TYPE.EIGHT:
+            case TILE_TYPE.EIGHT:
                 this.getComponent(cc.Sprite).spriteFrame = this.picNumList[8];
                 break;
-            case TYPE.BOMB:
+            case TILE_TYPE.BOMB:
                 this.getComponent(cc.Sprite).spriteFrame = this.picBomb;
                 break;
             default:break;
