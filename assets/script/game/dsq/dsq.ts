@@ -1,30 +1,27 @@
-// Learn TypeScript:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+import {dsq} from "./dsqGlobel"
+import DsqData from "./data/dsqData"
+import DsqNet from "./node/dsqNet"
+import DsqRoomInfo from "./node/dsqRoomInfo"
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class Dsq extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
+    @property(cc.Node)
+    dsqDataNode: cc.Node = null;
+    @property(cc.Node)
+    dsqNetNode: cc.Node = null;
+    @property(cc.Node)
+    dsqRoomInfoNode: cc.Node = null;
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
-
-    start () {
-
+    onLoad () {
+        dsq.center = this;
+        dsq.data = this.dsqDataNode.getComponent(DsqData);
+        dsq.net = this.dsqNetNode.getComponent(DsqNet);
+        dsq.roomInfo = this.dsqRoomInfoNode.getComponent(DsqRoomInfo);
     }
 
     // update (dt) {}
