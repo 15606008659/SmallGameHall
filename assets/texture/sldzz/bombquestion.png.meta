@@ -1,0 +1,32 @@
+{
+  "ver": "2.3.0",
+  "uuid": "52e22117-ab76-494c-95c5-757fa3ced2ac",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "platformSettings": {},
+  "subMetas": {
+    "bombquestion": {
+      "ver": "1.0.3",
+      "uuid": "593b5293-51d3-4f58-9714-d2b1248f4e9f",
+      "rawTextureUuid": "52e22117-ab76-494c-95c5-757fa3ced2ac",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 68,
+      "height": 68,
+      "rawWidth": 68,
+      "rawHeight": 68,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

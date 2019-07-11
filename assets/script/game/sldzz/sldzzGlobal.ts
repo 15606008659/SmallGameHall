@@ -1,13 +1,16 @@
+import slddzGame from "./sldzzGame";
+
+export const sldzz = {
+    game: null,
+    data: null
+
+}
+
 export const enum GAME_STATE {
     PREPARE = 1,
     PLAY = 2,
     DEAD = 3,
     WIN = 4
-};
-
-export const enum TOUCH_STATE {
-    BLANK = 1,
-    FLAG = 2,
 };
 
 export const enum TILE_STATE {

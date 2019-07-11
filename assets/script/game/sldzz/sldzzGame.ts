@@ -141,7 +141,8 @@ export default class slddzGame extends cc.Component {
     }
 
     onClickTile(targetTile: sldzzTile){
-        console.log("onClick:");
+        console.log("onClick");
+        
         if(targetTile.type == TILE_TYPE.BOMB){
             targetTile.state = TILE_STATE.CLIKED;
             this.gameOver();
@@ -170,7 +171,7 @@ export default class slddzGame extends cc.Component {
     }
 
     onFlagTile(targetTile){
-        console.log("onFlag:");
+        console.log("onFlag");
         if(targetTile.state == TILE_STATE.NONE){
             targetTile.state = TILE_STATE.FLAG;
         }else if(targetTile.state == TILE_STATE.FLAG){
