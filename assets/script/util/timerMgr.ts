@@ -7,6 +7,10 @@ export default class TimerMgr {
     _lastGetTime:number = 0;
     _interval:number = 0;
     _intervalId:number = -1;
+
+    /**
+     * @param interval 调用间隔，单位秒
+     */
     constructor(interval?:number){
         this._interval = interval;
         if(interval > 0){

@@ -3,7 +3,8 @@
 The main namespace of Cocos2d-JS, all engine core classes, functions, properties and constants are defined in this namespace.
 !#zh
 Cocos 引擎的主要命名空间，引擎代码中所有的类，函数，属性和常量都在这个命名空间中定义。 */
-declare module cc {	
+declare module cc {
+
 	/** The current version of Cocos2d being used.<br/>
 	Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
 	If you post a bug to forum, please attach this flag. */
@@ -6696,7 +6697,10 @@ declare module cc {
 		enabledInHierarchy: boolean;		
 		/** !#en Returns a value which used to indicate the onLoad get called or not.
 		!#zh 返回一个值用来判断 onLoad 是否被调用过，不等于 0 时调用过，等于 0 时未调用。 */
-		_isOnLoadCalled: number;		
+		_isOnLoadCalled: number;
+		/** !#en
+		 !#zh 表示该对象是否可用（被 destroy 后将不可用）。 */
+		isValid:boolean;
 		/**
 		!#en Update is called every frame, if the Component is enabled.<br/>
 		This is a lifecycle method. It may not be implemented in the super class. You can only call its super class method inside it. It should not be called manually elsewhere.

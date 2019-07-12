@@ -163,7 +163,7 @@ class Other {
             }
         }
         if(fun){
-            cc.timerMgr.addOnceTimer(randomTime * 1000,function(){
+            cc.timerMgr.addOnceTimer(randomTime,function(){
                 if(component.isValid){
                     fun();
                 }
@@ -191,7 +191,7 @@ class Other {
             }
         }
         if(fun){
-            cc.timerMgr.addOnceTimer(randomTime * 1000,function(){
+            cc.timerMgr.addOnceTimer(randomTime,function(){
                 if(component.isValid){
                     fun();
                 }

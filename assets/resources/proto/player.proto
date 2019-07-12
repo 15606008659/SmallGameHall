@@ -1,0 +1,11 @@
+syntax = "proto2";
+package player;
+
+message LoginR {
+    required string userName = 1;
+    required string token = 2;
+}
+
+message LoginA {
+    required int64 uid = 1;
+}

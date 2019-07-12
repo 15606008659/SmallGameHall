@@ -1,6 +1,3 @@
-
-
-import gameConfig from "../data/gameConfig";
 //import HotUpdate from "../../hotUpdate/HotUpdate";
 class HotUpdate{
     clear(){
@@ -10,12 +7,12 @@ class HotUpdate{
 
     }
     loadScene(sceneName:string,progressCallvack){
-
+        
     }
 }
 
 class LoadUtil {
-    debug:boolean = gameConfig.LOG.LOAD_UTIL;
+    debug:boolean = false;
     // @ts-ignore
     _loadingMap:Array<string> = {};//正在加载中的资源名 是一个map,为了代码提示 类型设置为[string]
     _mapLoadSceneProgressObj:object = {};
@@ -31,8 +28,8 @@ class LoadUtil {
         }
         return false;
     }
-    async loadPrefab(path:string,reConn:number = 0,checkNode:cc.Node = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
-        return await this.loadRes(path,reConn,checkNode,cc.Prefab,canRepeatLoad,progressCallback);
+    async loadPrefab(path:string,reConn:number = 0,checkComponent:cc.Component = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
+        return await this.loadRes(path,reConn,checkComponent,cc.Prefab,canRepeatLoad,progressCallback);
     }
     loadResDir(path:string,reConn:number,checkComponent:cc.Component = null,resType,canRepeatLoad:boolean = true,progressCallback:Function = undefined):Promise<Array<any>>{
         let self = this;
@@ -60,7 +57,7 @@ class LoadUtil {
                     }
                 };
             }
-            let timerId = cc.timerMgr.addTimer(1000,-1,function (dt) {
+            let timerId = cc.timerMgr.addTimer(1,-1,function (dt) {
                 if(cc.game.isPaused()){ //为了处理进入后台的情况，进入后台不计算超时时间
                     lastInProgressTime += dt;
                 }
@@ -77,7 +74,7 @@ class LoadUtil {
                 delete self._loadingMap[path];
                 if (err) {
                     if(reConn){
-                        checkComponent.isValid && (self.loadResDir(path,--reConn,checkComponent,resType,canRepeatLoad,progressCallback)).then(resolve).catch(reject);
+                        checkComponent && checkComponent.isValid && (self.loadResDir(path,--reConn,checkComponent,resType,canRepeatLoad,progressCallback)).then(resolve).catch(reject);
                     }else{
                         reject({errorCode:0x5001,message:'资源加载失败'});
                     }
@@ -86,7 +83,7 @@ class LoadUtil {
                     return;
                 }
                 self.debug && console.log('load '+path+' end');
-                checkComponent.isValid && resolve(res);
+                checkComponent && checkComponent.isValid && resolve(res);
             };
             let args3 = isValidProgress || endCallback;
             let args4 = isValidProgress?endCallback:undefined;
@@ -97,18 +94,18 @@ class LoadUtil {
      * 預加载场景
      * @param sceneName 场景名 
      * @param reConn 重加载次数
-     * @param checkNode 节点是否有效
+     * @param checkComponent 组件是否有效
      * @param canRepeatLoad 是否重复加载
      * @param progressCallback 进度条回调函数
      */
-    async loadScene(sceneName:string,reConn:number = 0,checkNode:cc.Node = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
+    async loadScene(sceneName:string,reConn:number = 0,checkComponent:cc.Component = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
         if(!CC_JSB || this._loadEndScene[sceneName] || this._publicSceneMap[sceneName]){
-            await this._inResLoadScene(sceneName,reConn,checkNode,canRepeatLoad,progressCallback);
+            await this._inResLoadScene(sceneName,reConn,checkComponent,canRepeatLoad,progressCallback);
         }else{
-            await this.hotUpdateScene(sceneName,reConn,checkNode,progressCallback);
+            await this.hotUpdateScene(sceneName,reConn,checkComponent,progressCallback);
         }
     }
-    _inResLoadScene(sceneName:string,reConn:number = 0,checkNode:cc.Node = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
+    _inResLoadScene(sceneName:string,reConn:number = 0,checkComponent:cc.Component = null,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
         let self = this;
         if(!canRepeatLoad && self._loadingMap[sceneName]){
             this.debug && console.log('场景已在加载中 sceneName = '+sceneName);
@@ -119,7 +116,7 @@ class LoadUtil {
             self.debug && console.log('load '+sceneName+' start');
             self._loadingMap[sceneName] = true;
             let lastInProgressTime = Date.now();
-            let timerId = cc.timerMgr.addTimer(1000,-1,function (dt) {
+            let timerId = cc.timerMgr.addTimer(1,-1,function (dt) {
                 if(cc.game.isPaused()){ //为了处理进入后台的情况,进入后台不计算超时时间
                     lastInProgressTime += dt;
                 }
@@ -137,14 +134,14 @@ class LoadUtil {
                 if (err){
                     reConn--;
                     console.error("加载场景失败 sceneName = "+sceneName);
-                    if(reConn && checkNode.isValid){
+                    if(reConn && checkComponent.isValid){
                         console.log('开始重新加载 '+new Date());
                         lastInProgressTime = Date.now();
                         cc.director.preloadScene(sceneName);
                     }else{
                         delete self._loadingMap[sceneName];
                         cc.timerMgr.removeTimer(timerId);
-                        checkNode.isValid && reject({errorCode:0x5001,message:'资源加载失败'});
+                        checkComponent.isValid && reject({errorCode:0x5001,message:'资源加载失败'});
                         isEnd = true;
                     }
                     console.error(err.message);
@@ -156,17 +153,17 @@ class LoadUtil {
                 cc.timerMgr.removeTimer(timerId);
                 self._loadEndScene[sceneName] = true;
                 isEnd = true;
-                checkNode.isValid && resolve();
+                checkComponent.isValid && resolve();
             };
             self._mapLoadSceneProgressObj[sceneName] = {
                 progressCallback:progressCallback,
-                checkNode:checkNode,
+                checkComponent:checkComponent,
             };
             let args3 =  function(completedCount,totalCount){
                 lastInProgressTime = Date.now();
                 let curProgress:Function = self._mapLoadSceneProgressObj[sceneName].progressCallback;
-                let curCheckNode:cc.Node = self._mapLoadSceneProgressObj[sceneName].checkNode;
-                if(curProgress && curCheckNode.isValid){
+                let checkComponent:cc.Component = self._mapLoadSceneProgressObj[sceneName].checkComponent;
+                if(curProgress && checkComponent.isValid){
                     curProgress(completedCount,totalCount);
                 }
             };
@@ -174,7 +171,7 @@ class LoadUtil {
             cc.director.preloadScene(sceneName,args3,endCallback);
         });
     }
-    async hotUpdateScene(sceneName:string,reConn:number,checkNode:cc.Node = null,progressCallback:Function = undefined,hotUpdateObj:HotUpdate = null):Promise<boolean>{
+    async hotUpdateScene(sceneName:string,reConn:number,checkComponent:cc.Component = null,progressCallback:Function = undefined,hotUpdateObj:HotUpdate = null):Promise<boolean>{
         let self = this;
         if(self._loadingMap[sceneName]){
             this.debug && console.log('资源已在加载中 path = '+sceneName);
@@ -195,12 +192,12 @@ class LoadUtil {
                         return;
                     }
                     lastInProgressTime = Date.now();
-                    if(checkNode && checkNode.isValid){
+                    if(checkComponent && checkComponent.isValid){
                         progressCallback(completedCount,totalCount);
                     }
                 };
             }
-            let timerId = cc.timerMgr.addTimer(1000,-1,function (dt) {
+            let timerId = cc.timerMgr.addTimer(1,-1,function (dt) {
                 if(cc.game.isPaused()){ //为了处理进入后台的情况，进入后台不计算超时时间
                     lastInProgressTime += dt;
                 }
@@ -218,16 +215,16 @@ class LoadUtil {
                 if (err){
                     reConn--;
                     console.error("加载场景失败 sceneName = "+sceneName);
-                    if(reConn && checkNode.isValid){
+                    if(reConn && checkComponent.isValid){
                         console.log('加载开始重试 '+new Date());
                         if(err.message == 'need retry'){
                             hotUpdateObj.retry();
                         }else{
-                            self.hotUpdateScene(sceneName,--reConn,checkNode,progressCallback,hotUpdateObj).then(resolve).catch(reject);
+                            self.hotUpdateScene(sceneName,--reConn,checkComponent,progressCallback,hotUpdateObj).then(resolve).catch(reject);
                         }
                     }else{
                         hotUpdateObj.clear();
-                        checkNode.isValid && reject({errorCode:0x5001,message:'资源加载失败'});
+                        checkComponent.isValid && reject({errorCode:0x5001,message:'资源加载失败'});
                     }
                     console.error(err.message);
                     console.error(err);
@@ -236,7 +233,7 @@ class LoadUtil {
                 self._loadEndScene[sceneName] = true;
                 self.debug && console.log('load '+sceneName+' end');
                 hotUpdateObj.clear();
-                checkNode.isValid && resolve(needReStart);
+                checkComponent.isValid && resolve(needReStart);
             };
             let args2 = isValidProgress || function () {};
             try {
@@ -255,7 +252,7 @@ class LoadUtil {
         canRepeatLoad 是否能同时加载2个相同的资源
         progressCallback 进度回调
      */
-    async loadRes(path:string,reConn:number,checkNode:cc.Node = null,resType:any,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
+    async loadRes(path:string,reConn:number,checkComponent:cc.Component = null,resType:any,canRepeatLoad:boolean = true,progressCallback:Function = undefined){
         let self = this;
         if(!canRepeatLoad && self._loadingMap[path]){
             this.debug && console.log('资源已在加载中 path = '+path);
@@ -277,12 +274,12 @@ class LoadUtil {
                         return;
                     }
                     lastInProgressTime = Date.now();
-                    if(checkNode && checkNode.isValid){
+                    if(checkComponent && checkComponent.isValid){
                         progressCallback(completedCount,totalCount);
                     }
                 };
             }
-            let timerId = cc.timerMgr.addTimer(1000,-1,function (dt) {
+            let timerId = cc.timerMgr.addTimer(1,-1,function (dt) {
                 if(cc.game.isPaused()){ //为了处理进入后台的情况，进入后台不计算超时时间
                     lastInProgressTime += dt;
                 }
@@ -299,7 +296,7 @@ class LoadUtil {
                 delete self._loadingMap[path];
                 if (err) {
                     if(reConn){
-                        checkNode.isValid && (self.loadRes(path,--reConn,checkNode,resType,canRepeatLoad,progressCallback)).then(resolve).catch(reject);
+                        checkComponent.isValid && (self.loadRes(path,--reConn,checkComponent,resType,canRepeatLoad,progressCallback)).then(resolve).catch(reject);
                     }else{
                         reject({errorCode:0x5001,message:'资源加载失败'});
                     }
@@ -308,7 +305,7 @@ class LoadUtil {
                     return;
                 }
                 self.debug && console.log('load '+path+' end');
-                checkNode.isValid && resolve(res);
+                checkComponent.isValid && resolve(res);
             };
             let args3 = isValidProgress || endCallback;
             let args4 = isValidProgress?endCallback:undefined;

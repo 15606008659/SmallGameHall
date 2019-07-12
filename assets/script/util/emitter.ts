@@ -14,11 +14,13 @@ export default class Emitter {
         if(this.debug){
             console.log('[emitter] on '+ event);
         }
-        this._curRegisterId++;
-        if(this._curRegisterId >1000000000){
-            this._curRegisterId = 1;
-        }
         this._mapCallback[event] = this._mapCallback[event] || {};
+        do{
+            this._curRegisterId++;
+            if(this._curRegisterId >1000000000){
+                this._curRegisterId = 1;
+            }
+        }while(this._mapCallback[event][this._curRegisterId]);
         this._mapCallback[event][this._curRegisterId] = callback;
         return this._curRegisterId;
     }

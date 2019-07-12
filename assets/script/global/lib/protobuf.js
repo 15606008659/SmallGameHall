@@ -2145,7 +2145,7 @@
  
                 // 64bit signed varint
                 case ProtoBuf.TYPES["int64"]:
-                    return buffer.readVarint64();
+                    return buffer.readVarint64().toNumber();
  
                 // 64bit unsigned varint
                 case ProtoBuf.TYPES["uint64"]:

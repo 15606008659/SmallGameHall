@@ -1,8 +1,8 @@
-import gameConfig from "../../data/gameConfig";
 
 class Http{
     debug:boolean = true; //设置为true会打日志
     curUrlParam:object = null;
+    isHttps:boolean = false;
     constructor() {
     }
     urlDecryptFun(originStr:string):string{
@@ -32,14 +32,18 @@ class Http{
             }
         });
     }
-    //url:请求地址
-    //dataObj:数据 是一个对象
-    //dataInUrl:数据是否在url中
-    //reConCount:失败后重新请求的次数
-    //callback:回调
+
+    /**
+     *
+     * @param url 请求地址
+     * @param dataObj 数据 是一个对象
+     * @param reConCount 数据是否在url中
+     * @param dataInUrl 失败后重新请求的次数
+     * @param callback 回调
+     */
     sendPost(url:string,dataObj:object,reConCount:number = 0,dataInUrl:boolean = false,callback:Function){
         let urlHead = '';
-        if(gameConfig.IS_HTTPS){
+        if(this.isHttps){
             urlHead = 'https://';
         }else{
             urlHead =  'http://';
@@ -66,13 +70,17 @@ class Http{
             }
         });
     }
-    //url:请求地址
-    //dataObj:数据 是一个对象
-    //callback:回调
-    //reConCount:失败后重新请求的次数
+
+    /**
+     *
+     * @param url 请求地址
+     * @param dataObj 数据 是一个对象
+     * @param reConCount 回调
+     * @param callback 失败后重新请求的次数
+     */
     sendGet(url:string,dataObj:object,reConCount:number = 0,callback:Function){
         let urlHead = '';
-        if(gameConfig.IS_HTTPS){
+        if(this.isHttps){
             urlHead = 'https://';
         }else{
             urlHead =  'http://';
@@ -89,9 +97,9 @@ class Http{
         xhr.send();
         return xhr;
     }
-    /*
-        当前网址获取url 中的参数
-        paramName:参数名
+    /**
+     * 当前网址获取url 中的参数
+     * @param paramName 参数名
      */
     getCurUrlParam(paramName:string):string {
         if(!this.curUrlParam){

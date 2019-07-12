@@ -1,0 +1,30 @@
+syntax = "proto2";
+package protocol;
+
+message Msg {
+    required string version         = 1; //版本号
+    required int32 clientRequestId  = 2;
+    required string moduleName      = 3; //模块
+    optional string serverName      = 4;    //到那个服务器
+    required int32 protoId          = 5;
+    optional bytes protoMsg         = 6;
+    optional int32 errorId          = 7;
+    optional int64 uid              = 8;
+    optional int64 session          = 9;
+}
+
+message Test {
+    required int32 testNumber    = 1;
+}
+
+message Int32{
+    required int32 value = 1;
+}
+
+message Int64{
+    required int64 value = 1;
+}
+
+message String{
+    required string value = 1;
+}
