@@ -46,6 +46,7 @@ export default class sldzzTile extends cc.Component {
     set state(value){
         if (value !== this._state) {
             this._state = value;
+            this.doubtNode.active = false;
             switch(this._state) {
                 case TILE_STATE.NONE:
                     this.getComponent(cc.Sprite).spriteFrame = this.picNone;

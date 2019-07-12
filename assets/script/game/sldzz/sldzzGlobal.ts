@@ -1,12 +1,14 @@
 import slddzGame from "./sldzzGame";
 import sldzzData from "./sldzzData";
 import SaoLieDaZuoZhan from "./saoLieDaZuoZhan";
+import sldzzListenMgr from "./sldzzListenMgr";
 
 
 class SLDZZ {
     game: slddzGame = null;
     data: sldzzData = null;
     center: SaoLieDaZuoZhan = null;
+    listenMgr: sldzzListenMgr = null;
 }
 export {sldzz}
 let sldzz = new SLDZZ();
@@ -14,8 +16,8 @@ let sldzz = new SLDZZ();
 export const enum GAME_STATE {
     PREPARE = 1,
     PLAY = 2,
-    DEAD = 3,
-    WIN = 4
+    STOP = 3,
+    OVER = 4
 };
 
 export const enum TILE_STATE {

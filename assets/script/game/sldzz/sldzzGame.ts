@@ -1,9 +1,11 @@
 import sldzzTile from "./sldzzTile";
-import { TILE_STATE, TILE_TYPE, GAME_STATE} from "./sldzzGlobal";
+import sldzzListenMgr from "./sldzzListenMgr";
+import { TILE_STATE, TILE_TYPE, GAME_STATE, sldzz} from "./sldzzGlobal";
+import { playDt, tileDt } from "./sldzzData";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class slddzGame extends cc.Component {
+export default class sldzzGame extends cc.Component {
     @property
     row: number = 8;   //行
 
@@ -19,51 +21,22 @@ export default class slddzGame extends cc.Component {
     @property(cc.Prefab)
     tilePfb: cc.Prefab = null;
 
-    touchTile: sldzzTile = null;
-
     tileList: sldzzTile[] = [];
 
-    holdClick: boolean = false;
-
-    holdTimeEclipse: number = 0;
-
     gameState: GAME_STATE = GAME_STATE.PREPARE;
+
+    curPlayerNum: number = 0;
 
     onLoad(){
         this.tileLayoutNode.width = this.tilePfb.data.width * this.row;
         this.tileLayoutNode.height = this.tilePfb.data.height * this.col;
 
-        let self = this;
         for(let y = 0; y < this.row; y ++){
             for(let x = 0; x < this.col; x ++){
                 let tileNode = cc.instantiate(this.tilePfb);
                 let tile = tileNode.getComponent(sldzzTile);
                 tile.sign = y * this.col + x;
-
-                tileNode.on(cc.Node.EventType.TOUCH_START, function(event){
-                    if(self.gameState != GAME_STATE.PLAY){
-                        return;
-                    }
-                    self.holdClick = true;
-                    self.holdTimeEclipse = 0;   
-                    self.touchTile = tile;         
-                },this)
-
-                tileNode.on(cc.Node.EventType.TOUCH_CANCEL, function(event){
-                    self.holdClick = false;
-                    self.holdTimeEclipse = 0;
-                    self.touchTile = null;
-                }, this)
-
-                tileNode.on(cc.Node.EventType.TOUCH_END, function(event){
-                    if(self.gameState == GAME_STATE.PLAY && self.holdClick && tile.state == TILE_STATE.NONE){
-                        self.holdClick = false;
-                        self.holdTimeEclipse = 0;
-                        self.touchTile = null;
-                        self.onClickTile(tile);
-                    }
-                }, this)
-
+                sldzz.listenMgr.addTileListen(tileNode);
                 this.tileList.push(tile);
                 this.tileLayoutNode.addChild(tileNode);
             }
@@ -169,7 +142,7 @@ export default class slddzGame extends cc.Component {
         }
     }
 
-    onFlagTile(targetTile){
+    onFlagTile(targetTile: sldzzTile){
         console.log("onFlag");
         if(targetTile.state == TILE_STATE.NONE){
             targetTile.state = TILE_STATE.FLAG;
@@ -179,7 +152,7 @@ export default class slddzGame extends cc.Component {
     }
 
     gameOver(){
-        this.gameState = GAME_STATE.DEAD;
+        this.gameState = GAME_STATE.OVER;
     }
 
     judgeWin(){
@@ -191,24 +164,41 @@ export default class slddzGame extends cc.Component {
             }
         }
         if(confNum == this.tileList.length - this.bombNum){
-            this.gameState = GAME_STATE.WIN;
+            this.gameState = GAME_STATE.OVER;
         }
     }
 
-    update(dt){
-        if(this.gameState != GAME_STATE.PLAY){
-            return;
-        }
-
-        if(this.holdClick){
-            this.holdTimeEclipse += dt;
-            if(this.holdTimeEclipse > 1){
-                this.onFlagTile(this.touchTile);
-                this.holdClick = false;
-                this.holdTimeEclipse = 0;
-                this.touchTile = null;
+    onChangePlayer(seatNum: number){
+        this.curPlayerNum = seatNum;
+        let playerDt: playDt = null;
+        sldzz.data.playDataList.forEach(element => {
+            if(element.seatNum == seatNum){
+                playerDt = element;
             }
-        }
+        });
 
+        if(playerDt == null){
+            return;
+        }   
+
+        if(playerDt.isSelected){
+            for(let i = 0; i < this.tileList.length; i ++){
+                let dt = sldzz.data.nowTileDtList[i];
+                this.tileList[i].doubtDataList = dt.doubtDataList;
+                this.tileList[i].type = dt.type;
+                this.tileList[i].state = dt.state;
+            }
+
+            this.gameState = GAME_STATE.STOP;
+        }else{
+            for(let i = 0; i < this.tileList.length; i ++){
+                let dt = sldzz.data.originalTileDtList[i];
+                this.tileList[i].doubtDataList = [];
+                this.tileList[i].type = dt.type;
+                this.tileList[i].state = dt.state;
+            }
+
+            this.gameState = GAME_STATE.PLAY;
+        }
     }
 }
