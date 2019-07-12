@@ -1,10 +1,15 @@
 import slddzGame from "./sldzzGame";
+import sldzzData from "./sldzzData";
+import SaoLieDaZuoZhan from "./saoLieDaZuoZhan";
 
-export const sldzz = {
-    game: null,
-    data: null
 
+class SLDZZ {
+    game: slddzGame = null;
+    data: sldzzData = null;
+    center: SaoLieDaZuoZhan = null;
 }
+export {sldzz}
+let sldzz = new SLDZZ();
 
 export const enum GAME_STATE {
     PREPARE = 1,

@@ -1,4 +1,5 @@
 import {TILE_STATE, TILE_TYPE} from "./sldzzGlobal"
+import sldzzPlayer from "./sldzzplayer";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -8,15 +9,19 @@ export default class sldzzTile extends cc.Component {
 
     @property(cc.SpriteFrame)
     picFlag: cc.SpriteFrame = null;
-
-    @property(cc.SpriteFrame)
-    picDoubt: cc.SpriteFrame = null;
     
+    @property(cc.SpriteFrame)
+    picBomb: cc.SpriteFrame = null;
+
     @property(cc.SpriteFrame)
     picNumList: Array<cc.SpriteFrame> = [];
 
-    @property(cc.SpriteFrame)
-    picBomb: cc.SpriteFrame = null;
+    @property(cc.Prefab)
+    signIconPfb: cc.Prefab = null;
+
+    doubtNode: cc.Node = null;
+
+    doubtDataList: Array<any> = [];
 
     private _state: TILE_STATE = TILE_STATE.NONE;
 
@@ -26,7 +31,9 @@ export default class sldzzTile extends cc.Component {
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () {
+        this.doubtNode = this.node.getChildByName("doubtNode");
+    }
 
     start () {
 
@@ -50,7 +57,7 @@ export default class sldzzTile extends cc.Component {
                     this.getComponent(cc.Sprite).spriteFrame = this.picFlag;
                     break;
                 case TILE_STATE.DOUBT:
-                    this.getComponent(cc.Sprite).spriteFrame = this.picDoubt;
+                    this.showDoubt();
                     break;
                 default:break;
             }
@@ -90,6 +97,62 @@ export default class sldzzTile extends cc.Component {
                 this.getComponent(cc.Sprite).spriteFrame = this.picBomb;
                 break;
             default:break;
+        }
+    }
+
+    showDoubt(){
+        this.doubtNode.removeAllChildren();
+        this.doubtNode.active = true;
+
+        for(let i = 0; i < this.doubtDataList.length; i ++){
+            let doubtData = this.doubtDataList[i];
+            let signIcon = cc.instantiate(this.signIconPfb);
+            signIcon.getComponent(cc.Sprite).spriteFrame = doubtData["pic"];
+            signIcon.getChildByName("flag").active = doubtData["isFlag"];
+            this.doubtNode.addChild(signIcon);
+        }
+
+        switch(this.doubtDataList.length){
+            case 0:
+                this.doubtNode.active = false;
+                break;
+            case 1:
+                break;
+            case 2:
+                this.doubtNode.children.forEach(element => {
+                    element.setScale(0.5, 0.5);
+                });
+                this.doubtNode.children[0].setAnchorPoint(1, 0);
+                this.doubtNode.children[1].setAnchorPoint(0, 1);
+                break;
+            case 3:
+                this.doubtNode.children.forEach(element => {
+                    element.setScale(0.5, 0.5);
+                });
+                this.doubtNode.children[0].setAnchorPoint(1, 0);
+                this.doubtNode.children[1].setAnchorPoint(0, 0);
+                this.doubtNode.children[2].setAnchorPoint(0.5, 1);
+                break;
+            case 4:
+                this.doubtNode.children.forEach(element => {
+                    element.setScale(0.5, 0.5);
+                });
+                this.doubtNode.children[0].setAnchorPoint(1, 0);
+                this.doubtNode.children[1].setAnchorPoint(0, 0);
+                this.doubtNode.children[2].setAnchorPoint(0, 1);
+                this.doubtNode.children[3].setAnchorPoint(1, 1);
+                break;
+            case 5:
+                this.doubtNode.children.forEach(element => {
+                    element.setScale(0.3, 0.3);
+                });
+                this.doubtNode.children[0].setAnchorPoint(1, 0);
+                this.doubtNode.children[1].setAnchorPoint(0, 0);
+                this.doubtNode.children[2].setAnchorPoint(0, 1);
+                this.doubtNode.children[3].setAnchorPoint(1, 1);
+                break;
+            default:
+                this.doubtNode.active = false;
         }
     }
 

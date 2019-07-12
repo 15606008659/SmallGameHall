@@ -70,7 +70,6 @@ export default class slddzGame extends cc.Component {
         }
 
         // this.tileLayoutNode.getComponent(cc.Layout).enabled = false;
-        this.newGame();
     }
 
     newGame(){
@@ -142,7 +141,7 @@ export default class slddzGame extends cc.Component {
 
     onClickTile(targetTile: sldzzTile){
         console.log("onClick");
-        
+
         if(targetTile.type == TILE_TYPE.BOMB){
             targetTile.state = TILE_STATE.CLIKED;
             this.gameOver();
