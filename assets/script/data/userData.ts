@@ -8,7 +8,16 @@ export default class UserData {
     get uid():number{
         return this['_uid'];
     }
-    nickName:string = '';
+    set nickName(nickName:string){
+        this['_nickName'] = nickName;
+        cc.propertyCenter.emitProperty('gameCenter','userName',nickName);
+    }
+    get nickName():string{
+        if(typeof this['_nickName'] === 'undefined'){
+            this['_nickName'] = '';
+        }
+        return this['_nickName'];
+    }
     sex:SEX = SEX.UNKNOWN;
     headPic:cc.SpriteFrame = null;
 }

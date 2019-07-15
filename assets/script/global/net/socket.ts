@@ -4,7 +4,7 @@ import loadUtil from "../../util/loadUtil";
 import {BroadcastNetData, DealEndSocketData, SocketRequest} from "./socketDealObj";
 import {INSIDE_EVENT} from "../../data/commonEnum";
 
-let protoBuilder = protobuf.newBuilder();
+const protoBuilder = protobuf.newBuilder();
 
 export enum SOCKET_STATE{
     NONE,

@@ -9,10 +9,10 @@ import {INSIDE_EVENT} from "../data/commonEnum";
 import gameConfig from "../data/gameConfig";
 import loadUtil from "../util/loadUtil";
 import http from "./net/http";
-import PropertyCenter from "./propertyCenter";
-
+import propertyCenter from "./propertyCenter";
 
 const {ccclass, property} = cc._decorator;
+
 
 @ccclass
 export default class GameCenter extends cc.Component {
@@ -29,7 +29,7 @@ export default class GameCenter extends cc.Component {
         cc.dataCenter = this.dataCenter;
         cc.uiCenter = this.uiCenter;
         cc.audioCenter = new AudioCenter();
-        cc.propertyCenter = new PropertyCenter();
+        cc.propertyCenter = propertyCenter;
         cc.socket = new Socket();
         cc.insideEmitter = new Emitter();
         cc.timerMgr = new TimerMgr(1/60);
