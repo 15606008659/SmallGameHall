@@ -18,7 +18,7 @@ export default class sldzzPlayer extends cc.Component {
     // onLoad () {}
 
     start () {
-
+        this.scoreLab.string = "0";
     }
 
     // update (dt) {}

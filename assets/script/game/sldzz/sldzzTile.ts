@@ -110,6 +110,7 @@ export default class sldzzTile extends cc.Component {
             let signIcon = cc.instantiate(this.signIconPfb);
             signIcon.getComponent(cc.Sprite).spriteFrame = doubtData["pic"];
             signIcon.getChildByName("flag").active = doubtData["isFlag"];
+            doubtData["signIcon"] = signIcon;
             this.doubtNode.addChild(signIcon);
         }
 

@@ -1,5 +1,7 @@
 import {sldzz, GAME_STATE, TILE_STATE} from "./sldzzGlobal"
 import sldzzTile from "./sldzzTile";
+import sldzzPlayer from "./sldzzPlayer";
+import sldzzData from "./sldzzData";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -38,8 +40,17 @@ export default class sldzzListenMgr extends cc.Component{
         }, this)
     }
 
-    onClickPlayer(seatNum: number){
+    onClickPlayer(event){
+        let seatNum = event.currentTarget.getComponent(sldzzPlayer).seatNum;
         sldzz.game.onChangePlayer(seatNum);
+    }
+
+    onBtnResult(event){
+        sldzz.game.onResult();
+    }
+
+    onBtnNext(event){
+        sldzz.game.onNext();
     }
     
     update(dt){
@@ -50,7 +61,7 @@ export default class sldzzListenMgr extends cc.Component{
         if(this.holdClick){
             this.holdTimeEclipse += dt;
             if(this.holdTimeEclipse > 1){
-                sldzz.game.onFlagTile(this.curTouchTile);
+                sldzz.game.onClickTile(this.curTouchTile, true);
                 this.holdClick = false;
                 this.holdTimeEclipse = 0;
                 this.curTouchTile = null;
