@@ -144,8 +144,10 @@ export class PropertyCenter {
 let propertyCenter = new PropertyCenter();
 
 /** 类装饰器
- * 如果要使用 下方的emit装饰器，则这个装饰器必须要使用
+ * 如果要使用 下方的lis装饰器，则这个装饰器必须要使用
  * @param constructor
+ *  demo:
+ *      @inPropertyCenter
  */
 export function inPropertyCenter<T extends {new(...args:any[]):{}}>(constructor:T) {
     if(constructor.onLoad){
@@ -170,12 +172,13 @@ export function inPropertyCenter<T extends {new(...args:any[]):{}}>(constructor:
 }
 
 /** 属性装饰器
- * 使用装饰器 广播属性 需要配合 inPropertyCenter 使用，属性必须写成get,set的形式
+ * 使用装饰器 广播属性 属性必须写成get,set的形式
  * @param moduleName  模块名
  * @param saveKey   存储属性的key值
  * @param useObj  是否使用this对象获取 key值
  *
- * demo: emit('gameCenter','userName','自己的名字');
+ * demo:
+ *      @emit('gameCenter','userName')
  */
 export function emit(moduleName:string,saveKey:string | number,useObj:boolean = false) {
     return (target,targetName,dec)=>{
@@ -202,12 +205,15 @@ export function emit(moduleName:string,saveKey:string | number,useObj:boolean = 
 }
 
 /** 属性装饰器
- * 使用装饰器 监听属性广播
+ * 使用装饰器 监听属性广播，需要配合 inPropertyCenter 使用
  * @param moduleName 模块名
  * @param saveKey   存储属性的key值
  * @param arrSetValueKey 监听到广播时,需要更新值的 对象属性名
  *
- * demo: addLisProperty('gameCenter','userName',label,'string');  label为某个Label组件
+ * demo:
+ *   @property(cc.Label)
+ *   @lis('gameCenter','userName','string')
+ *   testLabel:cc.Label = null;
  */
 export function lis(moduleName:string,saveKey:string | number,...arrSetValueKey:Array<string>){
     return (target,targetName)=>{

@@ -10,9 +10,9 @@ import gameConfig from "../data/gameConfig";
 import loadUtil from "../util/loadUtil";
 import http from "./net/http";
 import propertyCenter from "./propertyCenter";
+import modifyEngine from "../modifyEngine/modifyEngine";
 
 const {ccclass, property} = cc._decorator;
-
 
 @ccclass
 export default class GameCenter extends cc.Component {
@@ -24,6 +24,7 @@ export default class GameCenter extends cc.Component {
     uiCenter:UiCenter = null;
 
     onLoad () {
+        modifyEngine.modify();
         cc.game.addPersistRootNode(this.node);
         cc.gameCenter = this;
         cc.dataCenter = this.dataCenter;
@@ -70,8 +71,8 @@ export default class GameCenter extends cc.Component {
         cc.game.on(cc.game.EVENT_SHOW,cc.insideEmitter.emit.bind(cc.insideEmitter,INSIDE_EVENT.GAME_SHOW));
     }
     update (dt) {
+        cc.socket.update();
         cc.updateMgr.update(dt);
-        cc.socket.update(dt);
     }
     onDestroy(){
         cc.insideEmitter.removeAll();

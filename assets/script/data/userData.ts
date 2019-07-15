@@ -10,7 +10,6 @@ export default class UserData {
     }
     set nickName(nickName:string){
         this['_nickName'] = nickName;
-        cc.propertyCenter.emitProperty('gameCenter','userName',nickName);
     }
     get nickName():string{
         if(typeof this['_nickName'] === 'undefined'){
@@ -19,5 +18,5 @@ export default class UserData {
         return this['_nickName'];
     }
     sex:SEX = SEX.UNKNOWN;
-    headPic:cc.SpriteFrame = null;
+    headPicSpriteFrame:cc.SpriteFrame = null;
 }

@@ -3,8 +3,7 @@
 The main namespace of Cocos2d-JS, all engine core classes, functions, properties and constants are defined in this namespace.
 !#zh
 Cocos 引擎的主要命名空间，引擎代码中所有的类，函数，属性和常量都在这个命名空间中定义。 */
-declare module cc {
-
+declare module cc {	
 	/** The current version of Cocos2d being used.<br/>
 	Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
 	If you post a bug to forum, please attach this flag. */
@@ -815,8 +814,16 @@ declare module cc {
 	var rotateTo = cc.rotateTo(2, 61.0);
 	``` 
 	*/
-	export function rotateTo(duration: number, dstAngleX: number, dstAngleY?: number, dstAngleZ?: number): ActionInterval;	
-	/**
+	export function rotateTo(duration: number, dstAngleX: number, dstAngleY?: number, dstAngleZ?: number): ActionInterval;
+
+    /**
+	 * 此处是 自定义引擎的代码
+     * @param duration
+     * @param rotationX
+     * @param rotationY
+     */
+    export function rotateTo3D(duration: number, rotationX: number, rotationY:number): ActionInterval;
+    /**
 	!#en
 	Rotates a Node object clockwise a number of degrees by modifying its rotation property.
 	Relative to its properties to modify.
@@ -1550,7 +1557,11 @@ declare module cc {
 		!#zh 设置标签，用于识别动作。
 		@param tag tag 
 		*/
-		setTag(tag: number): void;		
+		setTag(tag: number): void;
+        /**
+         获取动画执行速度
+         */
+        getRunSpeed(aniDurTime:number = null,startTime:number = null,endTime:number = null):number;
 		/** !#en Default Action tag.
 		!#zh 默认动作标签。 */
 		static TAG_INVALID: number;	
@@ -3327,12 +3338,10 @@ declare module cc {
 		@example 
 		```js
 		var action = cc.scaleTo(0.2, 1, 0.6);
-		node.runAction(action);
-		node.runAction(action).repeatForever(); // fail
-		node.runAction(action.repeatForever()); // right
-		``` 
+		node.runAction(action,2.0,Date.now().Date.now() + 2000);
+		```
 		*/
-		runAction(action: Action): Action;		
+		runAction(action: Action,aniDurTime:number = null,startTime:number = null,endTime:number = null,useOldRunInTimeEnough:boolean = true): Action;  //此处 修改了 引擎原本的代码 aniDurTime 动画持续几秒 ，startTime 后台认为的动画开始时间 时间戳，endTime 后台认为的动画开始时间 时间戳
 		/**
 		!#en Pause all actions running on the current node. Equals to `cc.director.getActionManager().pauseTarget(node)`.
 		!#zh 暂停本节点上所有正在运行的动作。和 `cc.director.getActionManager().pauseTarget(node);` 等价。
@@ -6291,7 +6300,8 @@ declare module cc {
 		animCtrl.play("linear");
 		``` 
 		*/
-		play(name?: string, startTime?: number): AnimationState;		
+		play(name?: string, startFrameTime?: number,startTime?:number,endTime?:number,useOldRunInTimeEnough:boolean = false): AnimationState;
+		setSpeedByTime (name:string,startTime:number,endTime:number,useOldRunInTimeEnough:boolean = false);
 		/**
 		!#en
 		Plays an additive animation, it will not stop other animations.
@@ -6698,8 +6708,7 @@ declare module cc {
 		/** !#en Returns a value which used to indicate the onLoad get called or not.
 		!#zh 返回一个值用来判断 onLoad 是否被调用过，不等于 0 时调用过，等于 0 时未调用。 */
 		_isOnLoadCalled: number;
-		/** !#en
-		 !#zh 表示该对象是否可用（被 destroy 后将不可用）。 */
+
 		isValid:boolean;
 		/**
 		!#en Update is called every frame, if the Component is enabled.<br/>
@@ -6735,7 +6744,8 @@ declare module cc {
 		如果该组件第一次启用，则在所有组件的 update 之前调用。通常用于需要在所有组件的 onLoad 初始化完毕后执行的逻辑。<br/>
 		该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。 
 		*/
-		protected start(): void;		
+		protected start(): void;
+		protected setSpeedByTime(name:string,startTime:number,endTime:number,useOldRunInTimeEnough:boolean = true):void;
 		/**
 		!#en Called when this component becomes enabled and its node is active.<br/>
 		This is a lifecycle method. It may not be implemented in the super class. You can only call its super class method inside it. It should not be called manually elsewhere.

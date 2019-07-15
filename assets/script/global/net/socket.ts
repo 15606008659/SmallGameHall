@@ -396,7 +396,7 @@ export default class Socket{
                 break;
         }
     }
-    update(dt:number){
+    update(){
         if(this.arrNetData.length){
             if(this._dealInCurFrame){
                 this._dealInCurFrame = false;
