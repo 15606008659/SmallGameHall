@@ -9,3 +9,11 @@ message LoginR {
 message LoginA {
     required int64 uid = 1;
 }
+
+message EnterGameR {
+    required string moduleName = 1;
+}
+
+message GameOverA {
+    required string moduleName = 1;
+}

@@ -22,6 +22,9 @@ class ProtoMap{
         module    :"player",
         login     :{id : 0x00010001, protoType : 1, request : "player.LoginR", response : "player.LoginA"},
         logout    :{id : 0x00010002, protoType : 1, request : "int64", response : null},
+        enterGame 			: {id : 0x00010003, protoType : 1, request : "player.EnterGameR", response : null},
+        gameOver            : {id : 0x00010004, protoType : 2, request : null, response : "player.GameOverA"},
+        gameMsgTest     : {id : 0x00010005, protoType : 1, request : "player.EnterGameR", response : "player.EnterGameR"},
     };
 }
 export default new ProtoMap();

@@ -42,6 +42,11 @@ export default class GameCenter extends cc.Component {
         this.setConfig();
         await cc.socket.init();
         await cc.socket.connectionAsync(gameConfig.GAME_SERVER.IP,gameConfig.GAME_SERVER.PORT);
+
+        cc.socket.addEventListener(cc.protoMap.player.gameOver,function (data) {
+            console.log('收到gameOver data = ');
+            console.log(data)
+        })
     }
     async login(){
         let data = await cc.socket.requestAsync(cc.protoMap.player.login,{userName:'123',token:'123456'},this,false);
@@ -51,6 +56,20 @@ export default class GameCenter extends cc.Component {
     async logout(){
         await cc.socket.requestAsync(cc.protoMap.player.logout,cc.dataCenter.userData.uid,this,false);
         console.log('登出成功');
+    }
+    async enterGame(){
+        let sendData = {
+            moduleName:'123',
+        };
+        await cc.socket.requestAsync(cc.protoMap.player.enterGame,sendData,this,false);
+        console.log('enterGame成功');
+    }
+    async gameMsgTest(){
+        let sendData = {
+            moduleName:'123',
+        };
+        await cc.socket.requestAsync(cc.protoMap.player.gameMsgTest,sendData,this,false);
+        console.log('enterGame成功');
     }
     closeHeart(){
         cc.updateMgr.removeTimer(cc.socket._heartbeatTimerId);

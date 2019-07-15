@@ -244,9 +244,9 @@ export default class Socket{
      * @param arrConditionObj 条件对象数组，或者只是一个对象
      * @param arrConditionKey 条件对象键名数组，或者只是一个key
      */
-    addEventListener(proto:Proto, listener:any,arrConditionObj?:Array<object>|object,arrConditionKey?:Array<string>|string) {
-        if (proto.protoType !== PACKET_TYPE.REQUEST){
-            console.error("不是服务端主动下发协议 protoType = "+proto.protoType);
+    addEventListener(proto, listener:any,arrConditionObj?:Array<object>|object,arrConditionKey?:Array<string>|string) {
+        if (proto.protoType !== PACKET_TYPE.NOTICE){
+            console.error("不是服务端主动下发协议 id = "+proto.id+" name = "+proto.name+" protoType = "+proto.protoType);
             return;
         }
         let curEventMap = this._lisMapByProtoId[proto.id];
