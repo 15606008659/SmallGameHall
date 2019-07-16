@@ -4,6 +4,9 @@ import { TILE_STATE, TILE_TYPE, GAME_STATE, sldzz} from "./sldzzGlobal";
 import { playerDt, tileDt } from "./sldzzData";
 import sldzzPlayer from "./sldzzPlayer";
 import { elements } from "../../../../engine/cocos2d/videoplayer/video-player-impl";
+import other from "../../util/other";
+import random from "../../util/random";
+import sldzzRankView from "./sldzzRankView";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -14,14 +17,17 @@ export default class sldzzGame extends cc.Component {
     @property
     col: number = 8;   //列
 
-    @property
-    bombNum: number = 8; //炸弹数量
+    @property(cc.Label)
+    leftNumLab: cc.Label = null;
 
     @property(cc.Node)
     tileLayoutNode: cc.Node = null;
 
     @property(cc.Prefab)
     tilePfb: cc.Prefab = null;
+
+    @property(sldzzRankView)
+    rankView: sldzzRankView = null;
 
     tileList: sldzzTile[] = [];
 
@@ -66,7 +72,7 @@ export default class sldzzGame extends cc.Component {
             tilesIndex[i] = i;
         }
 
-        for(let i = 0; i < this.bombNum; i ++){
+        for(let i = 0; i < sldzz.data.bombNum; i ++){
             var n = Math.floor(Math.random() * tilesIndex.length);
             this.tileList[tilesIndex[n]].type = TILE_TYPE.BOMB;
             tilesIndex.splice(n, 1);//从第n个位置删除一个元素
@@ -87,6 +93,7 @@ export default class sldzzGame extends cc.Component {
            
         }
 
+        this.leftNumLab.string = sldzz.data.leftBombNum.toString();
         this.gameState = GAME_STATE.PLAY;
     }
 
@@ -181,12 +188,13 @@ export default class sldzzGame extends cc.Component {
         var confNum = 0;
         //判断是否胜利
         for(let i = 0; i < this.tileList.length; i ++){
-            if(this.tileList[i].state === TILE_STATE.CLIKED){
+            if(this.tileList[i].state == TILE_STATE.NONE){
                 confNum ++;
             }
         }
-        if(confNum == this.tileList.length - this.bombNum){
+        if(confNum == sldzz.data.leftBombNum || sldzz.data.leftBombNum == 0){
             this.gameState = GAME_STATE.OVER;
+            this.rankView.showRank();
         }
     }
 
@@ -236,16 +244,17 @@ export default class sldzzGame extends cc.Component {
                     scoreLab.node.active = true;
                     if((tile.type == TILE_TYPE.BOMB && doubtData["isFlag"] == false) || (tile.type != TILE_TYPE.BOMB && doubtData["isFlag"] == true)){
                         scoreLab.node.color = cc.Color.GREEN;
-                        scoreLab.string = "-6";
+                        scoreLab.string = "-5";
                     }else{
                         scoreLab.node.color = cc.Color.RED;
-                        scoreLab.string = "+6";
+                        scoreLab.string = "+" + Math.floor(6/tile.doubtDataList.length);
                     }
 
                     let playerDt = sldzz.data.getPlayerDtBySeatNum(doubtData["seatNum"]);
                     let player = sldzz.game.getPlayerBySeatNum(doubtData["seatNum"]);
 
                     playerDt.score += parseInt(scoreLab.string);
+                    if(playerDt.score < 0) playerDt.score = 0;
                     player.scoreLab.string = playerDt.score.toString();
                 })
             }
@@ -290,6 +299,9 @@ export default class sldzzGame extends cc.Component {
         }
 
         sldzz.data.reSetData();
+        this.leftNumLab.string = sldzz.data.leftBombNum.toString();
         this.curPlayerNum = 0;
+
+        this.judgeWin();
     }
 }

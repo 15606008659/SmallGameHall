@@ -22,8 +22,8 @@ export default class SaoLieDaZuoZhan extends cc.Component {
     }
 
     start () {
-        sldzz.game.newGame();
         sldzz.data.init();
+        sldzz.game.newGame();
     }
 
     // update (dt) {}
