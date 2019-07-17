@@ -29,6 +29,7 @@ export default class FjdzRoomInfo extends cc.Component {
     bgSpeedY: number = 50;
     curSelfScore:number = 0;//得分
     bombCount:number = 0;//炸弹道具数
+    curPercent:number = 0;//加速值
     onLoad () {
         this.enemyMgrTs = this.enemyMgrNode.getComponent(fjdzEnemyMgr);
         this.bulletMgrTs = this.bulletMgrNode.getComponent(fjdzBulletMgr);
@@ -59,6 +60,7 @@ export default class FjdzRoomInfo extends cc.Component {
     changeScore(addScore:number = 0){
         this.curSelfScore += addScore;
         this.selfScoreLabel.string = this.curSelfScore+"";
+        this.curPercent = Math.floor(this.curSelfScore/30000)*0.1;
     }
     /**
      * 改变炸弹个数
